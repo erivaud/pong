@@ -8,8 +8,6 @@ const char* entries[] = {
 
 bool menu_choice = false;
 
-Image myImg("IMG/licorne.png");
-
 // Caractéristiques de la balle
 int balle_posX = 20;
 int balle_posY = 20;
@@ -50,12 +48,14 @@ void drawLevel(int level, const char* mode){
     balle_speedX = 1;
     balle_speedY = 1;
     raquette_speed = 1;
+    raquette_IA_speed = 1;
   }
   // difficulté HARD
   if (level == 2){
     balle_speedX = 2;
     balle_speedY = 2;
     raquette_speed = 2;  // Vitesse verticale de la raquette
+    raquette_IA_speed = 2;
   }
   // Afficher la difficulté
   gb.display.setCursor(33, gb.display.height() - 5);
@@ -94,7 +94,7 @@ void setPaddlesBehaviors(const char* mode){
       if (gb.buttons.repeat(BUTTON_DOWN, 0)) {
       raquette1_posY = raquette1_posY + raquette_speed;
       }
-      
+
     if (gb.buttons.repeat(BUTTON_B, 0)) {
       raquette2_posY = raquette2_posY - raquette_speed;
       }
@@ -131,15 +131,14 @@ void loop() {
   
 if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   // display the menu
-  
   entry = gb.gui.menu("Choix mode de jeu :", entries);
   gb.display.clear();
   menu_choice = true;
-  
-  
-  
  }
-drawLevel(difficulte, entries[entry]);
+ 
+  drawLevel(difficulte, entries[entry]);
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ///// Changement de level et enregistrement nom player vainqueur
   if(score1 == 6 || score2 == 6){
@@ -160,14 +159,6 @@ drawLevel(difficulte, entries[entry]);
  //   }
  // }
 
-////////////////////////////////////////////////////////////////////////////////
-  // MAJ raquette1
-  if (gb.buttons.repeat(BUTTON_UP, 0)) {
-    raquette1_posY = raquette1_posY - raquette_speed;
-  }
-  if (gb.buttons.repeat(BUTTON_DOWN, 0)) {
-    raquette1_posY = raquette1_posY + raquette_speed;
-  }
   
 ////////////////////////////////////////////////////////////////////////////////
   // déplacement balle
@@ -176,11 +167,8 @@ drawLevel(difficulte, entries[entry]);
   
 ////////////////////////////////////////////////////////////////////////////////
   // Collisions avec les murs (haut et bas)
-  if (balle_posY < 0) {
-    balle_speedY = 1;
-  }
-  if (balle_posY > gb.display.height() - balle_taille) {
-    balle_speedY = -1;
+  if ((balle_posY < 0) || (balle_posY > gb.display.height() - balle_taille)) {
+    balle_speedY = -balle_speedY;
   }
   
 ////////////////////////////////////////////////////////////////////////////////
@@ -188,13 +176,13 @@ drawLevel(difficulte, entries[entry]);
   if ( (balle_posX == raquette1_posX + raquette_largeur)
        && (balle_posY + balle_taille >= raquette1_posY)
        && (balle_posY <= raquette1_posY + raquette_hauteur) ) {
-    balle_speedX = 1;
+       balle_speedX = -balle_speedX;
   }
   // Collision balle/raquette2
   if ( (balle_posX + balle_taille == raquette2_posX)
        && (balle_posY + balle_taille >= raquette2_posY)
        && (balle_posY <= raquette2_posY + raquette_hauteur) ) {
-    balle_speedX = -1;
+    balle_speedX = -balle_speedX;
   }
 
 ////////////////////////////////////////////////////////////////////////////////
