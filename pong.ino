@@ -167,16 +167,21 @@ void setPaddlesBehaviors(const char* mode){
       }
   }
   // en mode IA
-  // TODO : INSTAURER DES LIMITES DE DÉPLACEMENT HAUT ET BAS : BORDS ÉCRAN POUR L'IA
+  
+  // TODO : INSTAURER DES LIMITES DE DÉPLACEMENT HAUT ET BAS : BORDS ÉCRAN POUR L'IA 
+  // => OK à tester quand le rebond de la balle sera ok sur les bords haut et bas de l'écran
+  
   if (mode == "IA"){
     if (balle_posY > raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
-        raquette_IA_speed = 2;
+        raquette_IA_speed = raquette_IA_speed;
       } 
     else if (balle_posY < raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
-        raquette_IA_speed = -2;
+        raquette_IA_speed = -raquette_IA_speed;
       }
+      if( (raquette2_posY > 0) && (raquette2_posY + raquette_hauteur < gb.display.height()-1)) {
       raquette2_posY = raquette2_posY + raquette_IA_speed;
     }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////
