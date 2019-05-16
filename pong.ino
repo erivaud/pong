@@ -7,6 +7,7 @@ const char* entries[] = {
 };
 
 bool menu_choice = false;
+bool congrats = false;
 Image myImg("/pong/licorne.BMP");
 
 // Caractéristiques de la balle
@@ -34,10 +35,17 @@ int raquette_IA_speed = 1; // Pour l'IA
 int raquette_speed = 1;
 
 // Scores
-int score1;  // Score du joueur 1
-int score2;  // Score du joueur 2
+int score1 = 0;  // Score du joueur 1
+int score2 = 0;  // Score du joueur 2
 
-int difficulte = 3;  // Niveau de difficulté. 3 = FACILE et 2 = DIFFICILE
+int level = 3;  // Niveau de difficulté. 3 = FACILE et 2 = DIFFICILE
+
+////////////////////////////////////////////////////////////////////////////////////
+//Création d'une méthode pour marquer un point
+int increment(int scorePlayer) {
+  scorePlayer = scorePlayer + 1;
+  return scorePlayer;
+ }
 
 ////////////////////////////////////////////////////////////////////////////////////
 //Création d'une méthode random pour la couleur 
@@ -60,11 +68,19 @@ const Gamebuino_Meta::Sound_FX my_sfx[] = {
   {Gamebuino_Meta::Sound_FX_Wave::SQUARE,0,120,-6,0,84,10},
   };
 
+////////////////////////////////////////////////////////////////////////////////
+  // déplacement balle
+  void moveBall() {
+  balle_posX = balle_posX + balle_speedX;
+  balle_posY = balle_posY + balle_speedY;
+  }
 ////////////////////////////////////////////////////////////////////////////////////
 /////// Méthode de Draw initial du level ////////
 
 void drawLevel(int level, const char* mode){
 
+  congrats = false;
+  
   // caractéristiques des éléments en fonction du niveau
   // difficulté EASY
   if (level == 3) {
@@ -105,9 +121,30 @@ void drawLevel(int level, const char* mode){
   gb.display.print(score1);
   gb.display.setCursor(42, 5);
   gb.display.print(score2);
-
+  moveBall();
 }
 
+////////////////////////////////////////////////////////////////////
+////// Méthode pour dessiner un écran de félicitations entre les menus 
+void drawCongrats(int winner){
+    /*pong_ia;*/
+  // char playerName[13];
+  // gb.getDefaultName(playerName);
+  // gb.gui.keyboard("Nouveau score!", playerName);
+  // gb.display.print("Bravo ");
+  // gb.display.print(playerName);
+    
+   // gb.display.clear();
+    gb.display.print("Bravo joueur");
+    gb.display.print(winner);
+    gb.display.print("\nTu as gagné le niveau : ");
+    if (level == 2) {
+      gb.display.print("EASY");
+    }
+    else {
+      gb.display.print("HARD");
+    }
+}
 ////////////////////////////////////////////////////////////////////
 ////// Méthode pour gérer le déplacement des raquettes 
 void setPaddlesBehaviors(const char* mode){
@@ -132,9 +169,9 @@ void setPaddlesBehaviors(const char* mode){
   }
   // en mode IA
   if (mode == "IA"){
-      if (balle_posY > raquette2_posY + raquette_hauteur / 2 && random(0, difficulte) == 1) {
+      if (balle_posY > raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
         raquette_IA_speed = 2;
-      } else if (balle_posY < raquette2_posY + raquette_hauteur / 2 && random(0, difficulte) == 1) {
+      } else if (balle_posY < raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
         raquette_IA_speed = -2;
       }
       raquette2_posY = raquette2_posY + raquette_IA_speed;
@@ -147,7 +184,17 @@ void setPaddlesBehaviors(const char* mode){
   }
 }
 
-
+////////////////////////////////////////////////////////////////////
+////// Méthode pour switcher de level 
+int switchLevel(int level) {
+      if (level == 3) { // Facile
+      level = 2;  // Changer de difficulté
+    }
+    else {  // Difficile
+      level = 3;  // Changer de difficulté
+    }
+    return level;
+}
 
 void setup() {
   gb.begin();
@@ -165,47 +212,62 @@ if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   gb.display.clear();
   menu_choice = true;
  }
- 
-  drawLevel(difficulte, entries[entry]);
+else if(congrats){
+    level = switchLevel(level);
+    int winner = (score1 > score2 ? 1 : 2);
+    drawCongrats(winner);
+    delay(1000);
+    score1 = 0 ;
+    score2 = 0 ;
+    delay(1000);
+    drawLevel(level, entries[entry]);
+
+}
+ else {
+  drawLevel(level, entries[entry]);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///// Changement de level et enregistrement nom player vainqueur
   if(score1 == 6 || score2 == 6){
-    /*pong_ia;*/
-    char playerName[13];
-    gb.getDefaultName(playerName);
-    gb.gui.keyboard("Nouveau score!", playerName);
+    congrats = true;
   }
-  
-////////////////////////////////////////////////////////////////////////////////
- // Changement de difficulté
- // if (gb.buttons.pressed(BUTTON_MENU)) {
- //   if (difficulte == 3) { // Facile
- //     difficulte = 2;  // Changer de difficulté
- //   }
- //   else {  // Difficile
- //     difficulte = 3;  // Changer de difficulté
- //   }
- // }
+
 
   
 ////////////////////////////////////////////////////////////////////////////////
-  // déplacement balle
-  balle_posX = balle_posX + balle_speedX;
-  balle_posY = balle_posY + balle_speedY;
-  
+ // Changement de difficulté quand on appuie sur le bouton GAUCHE
+  if (gb.buttons.pressed(BUTTON_LEFT)) {
+    level = switchLevel(level);
+  }
+
+
 ////////////////////////////////////////////////////////////////////////////////
   // Collisions avec les murs (haut et bas)
  // if ((balle_posY < 0) || (balle_posY > gb.display.height() - balle_taille)) {
  //   balle_speedY = -balle_speedY;
  // }
 
+   if (balle_posX < 0) {
+    // Replacer la balle sur l'écran
+    balle_posX = 20;
+    // Position aléatoire en Y au centre de l'écran
+    balle_posY = random(20, gb.display.height() - 20);  
+    balle_speedX = 1;
+    if (random(0, 2) == 1) {  // 50% du temps
+      balle_speedY = 1;
+    } 
+    else {  // 50% du temps
+      balle_speedY = -1;
+    }
+    score2 = increment(score2);
+  }
+
  if (balle_posX > gb.display.width()) { 
-  // Reset ball 
+  // Replacer la balle sur l'écran
   balle_posX = 20; 
+  // Position aléatoire en Y au centre de l'écran
   balle_posY = random(20, gb.display.height() - 20); 
-  // Random position along the Y axis 
   balle_speedX = 1; 
   if (random(0, 2) == 1) { 
     // 50% of the time, this is true 
@@ -214,39 +276,8 @@ if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   else { // Other 50% of the time 
     balle_speedY = -1; 
     }
+    score1 = increment(score1);
  } 
-
-
-////////////////////////////////////////////////////////////////////////////////
-  // Vérifier si la balle est sortie de l'écran
-  if (balle_posX < 0) {
-    // Replacer la balle sur l'écran
-    balle_posX = 20;
-    balle_posY = random(20, gb.display.height() - 20);  // Position aléatoire au centre de l'écran
-    balle_speedX = 1;
-    if (random(0, 2) == 1) {  // 50% du temps
-      balle_speedY = 1;
-    } 
-    else {  // 50% du temps
-      balle_speedY = -1;
-    }
-    score2 = score2 + 1;
-  }
-  if (balle_posX > gb.display.width()) {
-    // Replacer la balle sur l'écran
-    balle_posX = 20;
-    balle_posY = random(20, gb.display.height() - 20);  // Position aléatoire au centre de l'écran
-    balle_speedX = 1;
-    if (random(0, 2) == 1) {  // 50% du temps
-      balle_speedY = 1;
-    } 
-    else {  // 50% du temps
-      balle_speedY = -1;
-    }
-    score1 = score1 + 1;
-  }
-
- 
   
 //////////////////////////////////////////////////////////////////////////////// SEVERINE
 // Collision avec la raquette gauche
@@ -276,15 +307,7 @@ if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
 
 
 
-
-
-
-
-
-
-
-
-
+ }
 
   
 }
