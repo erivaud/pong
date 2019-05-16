@@ -215,6 +215,37 @@ if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
     balle_speedY = -1; 
     }
  } 
+
+
+////////////////////////////////////////////////////////////////////////////////
+  // Vérifier si la balle est sortie de l'écran
+  if (balle_posX < 0) {
+    // Replacer la balle sur l'écran
+    balle_posX = 20;
+    balle_posY = random(20, gb.display.height() - 20);  // Position aléatoire au centre de l'écran
+    balle_speedX = 1;
+    if (random(0, 2) == 1) {  // 50% du temps
+      balle_speedY = 1;
+    } 
+    else {  // 50% du temps
+      balle_speedY = -1;
+    }
+    score2 = score2 + 1;
+  }
+  if (balle_posX > gb.display.width()) {
+    // Replacer la balle sur l'écran
+    balle_posX = 20;
+    balle_posY = random(20, gb.display.height() - 20);  // Position aléatoire au centre de l'écran
+    balle_speedX = 1;
+    if (random(0, 2) == 1) {  // 50% du temps
+      balle_speedY = 1;
+    } 
+    else {  // 50% du temps
+      balle_speedY = -1;
+    }
+    score1 = score1 + 1;
+  }
+
  
   
 //////////////////////////////////////////////////////////////////////////////// SEVERINE
@@ -241,39 +272,7 @@ if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   }
 
 
-////////////////////////////////////////////////////////////////////////////////
-  // Vérifier si la balle est sortie de l'écran
-  if (balle_posX < 0) {
-    // Replacer la balle sur l'écran
-    balle_posX = 20;
-    balle_posY = random(20, gb.display.height() - 20);  // Position aléatoire au centre de l'écran
-    balle_speedX = 1;
-    if (random(0, 2) == 1) {  // 50% du temps
-      balle_speedY = 1;
-    } 
-    else {  // 50% du temps
-      balle_speedY = -1;
-    }
 
-////////////////////////////////////////////////////////////////////////////////
-    // incrémenter le score du joueur 2
-    score2 = score2 + 1;
-  }
-  if (balle_posX > gb.display.width()) {
-    // Replacer la balle sur l'écran
-    balle_posX = 20;
-    balle_posY = random(20, gb.display.height() - 20);  // Position aléatoire au centre de l'écran
-    balle_speedX = 1;
-    if (random(0, 2) == 1) {  // 50% du temps
-      balle_speedY = 1;
-    } 
-    else {  // 50% du temps
-      balle_speedY = -1;
-    }
-////////////////////////////////////////////////////////////////////////////////
-    ////////// incrémenter le score du joueur 1  //////////
-    score1 = score1 + 1;
-  }
 
 
 
