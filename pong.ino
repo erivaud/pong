@@ -22,14 +22,14 @@ int raquette1_posX = 10;
 int raquette1_posY = 30;//raquette gauche
 int raquette2_posX = gb.display.width() - 13;
 int raquette2_posY = 30;//IA
-int raquette3_posX = 10;
-int raquette3_posY = 30;//Raquette droite
+//int raquette3_posX = 10;
+//int raquette3_posY = 30;//Raquette droite
 int raquette_hauteur = 10;
 int raquette_largeur = 3;
 
 // Pour l'IA
-int raquette2_speedY = 1;  // Vitesse verticale de la raquette2
-int raquette_speed =1;
+int raquette_IA_speed = 1; 
+int raquette_speed = 1;
 
 // Scores
 int score1;  // Score du joueur 1
@@ -42,7 +42,6 @@ int difficulte = 3;  // Niveau de difficulté. 3 = FACILE et 2 = DIFFICILE
 /////// Méthode de Draw initial du level ////////
 
 void drawLevel(int level, const char* mode){
-
 
   // caractéristiques des éléments en fonction du niveau
   // difficulté EASY
@@ -83,27 +82,39 @@ void drawLevel(int level, const char* mode){
 
 }
 
-
 ////////////////////////////////////////////////////////////////////
 ////// Méthode pour gérer le déplacement des raquettes 
 void setPaddlesBehaviors(const char* mode){
   // en mode 2 joueurs
   if (mode == "2_Joueurs"){
     if (gb.buttons.repeat(BUTTON_UP, 0)) {
+      raquette1_posY = raquette1_posY - raquette_speed;
+      }
+      if (gb.buttons.repeat(BUTTON_DOWN, 0)) {
+      raquette1_posY = raquette1_posY + raquette_speed;
+      }
+      
+    if (gb.buttons.repeat(BUTTON_B, 0)) {
       raquette2_posY = raquette2_posY - raquette_speed;
       }
-    if (gb.buttons.repeat(BUTTON_DOWN, 0)) {
+    if (gb.buttons.repeat(BUTTON_A, 0)) {
       raquette2_posY = raquette2_posY + raquette_speed;
       }
   }
   // en mode IA
   if (mode == "IA"){
       if (balle_posY > raquette2_posY + raquette_hauteur / 2 && random(0, difficulte) == 1) {
-        raquette_speed = 2;
+        raquette_IA_speed = 2;
       } else if (balle_posY < raquette2_posY + raquette_hauteur / 2 && random(0, difficulte) == 1) {
-        raquette_speed = -2;
+        raquette_IA_speed = -2;
       }
-    raquette2_posY = raquette2_posY + raquette_speed;  // Mettre à jour la position de la raquette2
+      raquette2_posY = raquette2_posY + raquette_IA_speed;
+    if (gb.buttons.repeat(BUTTON_UP, 0)) {
+      raquette1_posY = raquette1_posY - raquette_speed;
+      }
+      if (gb.buttons.repeat(BUTTON_DOWN, 0)) {
+      raquette1_posY = raquette1_posY + raquette_speed;
+      }
   }
 }
 
@@ -112,7 +123,7 @@ void setPaddlesBehaviors(const char* mode){
 void setup() {
   gb.begin();
 }
-
+uint8_t entry;
 void loop() {
   while(!gb.update());
   gb.display.clear();
@@ -120,14 +131,14 @@ void loop() {
 if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   // display the menu
   
-  uint8_t entry = gb.gui.menu("Choix mode de jeu :", entries);
+  entry = gb.gui.menu("Choix mode de jeu :", entries);
   gb.display.clear();
   menu_choice = true;
   
-  drawLevel(difficulte, entries[entry]);
+  
   
  }
-
+drawLevel(difficulte, entries[entry]);
 ////////////////////////////////////////////////////////////////////////////////
 ///// Changement de level et enregistrement nom player vainqueur
   if(score1 == 6 || score2 == 6){
