@@ -6,6 +6,13 @@ const char* entries[] = {
   "Scores",
 };
 
+typedef enum directions{
+  UP,
+  RIGHT,
+  DOWN,
+  LEFT
+} Sens;
+
 bool menu_choice = false;
 bool congrats = false;
 Image myImg("/pong/licorne.BMP");
@@ -69,9 +76,20 @@ const Gamebuino_Meta::Sound_FX my_sfx[] = {
 
 ////////////////////////////////////////////////////////////////////////////////
   // déplacement balle
-  void moveBall() {
-  balle_posX = balle_posX + balle_speedX;
-  balle_posY = balle_posY + balle_speedY;
+  void moveBall(Sens sensY, Sens sensX) {
+    if(sensY == UP) {
+      balle_posY = balle_posY - balle_speedY;
+    }if(sensY == DOWN) {
+      balle_posY = balle_posY + balle_speedY;
+    }
+    if(sensX == RIGHT) {
+      balle_posX = balle_posX + balle_speedX;
+    }
+    if(sensX == LEFT) {
+      balle_posX = balle_posX - balle_speedX;
+    }
+
+  
   }
 ////////////////////////////////////////////////////////////////////////////////////
 /////// Méthode de Draw initial du level ////////
@@ -120,7 +138,7 @@ void drawLevel(int level, const char* mode){
   gb.display.print(score1);
   gb.display.setCursor(42, 5);
   gb.display.print(score2);
-  moveBall();
+  moveBall(UP, RIGHT);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -247,6 +265,10 @@ else if(congrats){
  // if ((balle_posY < 0) || (balle_posY > gb.display.height() - balle_taille)) {
  //   balle_speedY = -balle_speedY;
  // }
+
+ if (balle_posY + balle_taille == 0) {
+  balle_speedY = -balle_speedY;
+ }
 
    if (balle_posX < 0) {
     // Replacer la balle sur l'écran
