@@ -49,7 +49,6 @@ int increment(int scorePlayer) {
 
 ////////////////////////////////////////////////////////////////////////////////////
 //Création d'une méthode random pour la couleur 
-
 Color createColor() { 
   // On crée les trois couleurs primaires
   int rand_color_rouge = rand() % 255; 
@@ -148,40 +147,36 @@ void drawCongrats(int winner){
 ////////////////////////////////////////////////////////////////////
 ////// Méthode pour gérer le déplacement des raquettes 
 void setPaddlesBehaviors(const char* mode){
-
-// TODO : INSTAURER DES LIMITES DE DÉPLACEMENT HAUT ET BAS : BORDS ÉCRAN
-
-  // en mode 2 joueurs
-  if (mode == "2_Joueurs"){
-    if (gb.buttons.repeat(BUTTON_UP, 0)) {
+   if ( (gb.buttons.repeat(BUTTON_UP, 0)) 
+      && (raquette1_posY > 0)) {
       raquette1_posY = raquette1_posY - raquette_speed;
       }
-      if (gb.buttons.repeat(BUTTON_DOWN, 0)) {
+    if ((gb.buttons.repeat(BUTTON_DOWN, 0)) 
+      && (raquette1_posY + raquette_hauteur < gb.display.height()-1)) {
       raquette1_posY = raquette1_posY + raquette_speed;
       }
-
-    if (gb.buttons.repeat(BUTTON_B, 0)) {
+  // en mode 2 joueurs
+  if (mode == "2_Joueurs"){
+    if ((gb.buttons.repeat(BUTTON_B, 0))
+      && (raquette2_posY > 0)) {
       raquette2_posY = raquette2_posY - raquette_speed;
       }
-    if (gb.buttons.repeat(BUTTON_A, 0)) {
+    if ((gb.buttons.repeat(BUTTON_A, 0))
+    && (raquette2_posY + raquette_hauteur < gb.display.height()-1)){
       raquette2_posY = raquette2_posY + raquette_speed;
       }
   }
   // en mode IA
+  // TODO : INSTAURER DES LIMITES DE DÉPLACEMENT HAUT ET BAS : BORDS ÉCRAN POUR L'IA
   if (mode == "IA"){
-      if (balle_posY > raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
+    if (balle_posY > raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
         raquette_IA_speed = 2;
-      } else if (balle_posY < raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
+      } 
+    else if (balle_posY < raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
         raquette_IA_speed = -2;
       }
       raquette2_posY = raquette2_posY + raquette_IA_speed;
-    if (gb.buttons.repeat(BUTTON_UP, 0)) {
-      raquette1_posY = raquette1_posY - raquette_speed;
-      }
-      if (gb.buttons.repeat(BUTTON_DOWN, 0)) {
-      raquette1_posY = raquette1_posY + raquette_speed;
-      }
-  }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////
