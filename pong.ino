@@ -111,6 +111,9 @@ void drawLevel(int level, const char* mode){
 ////////////////////////////////////////////////////////////////////
 ////// Méthode pour gérer le déplacement des raquettes 
 void setPaddlesBehaviors(const char* mode){
+
+// TODO : INSTAURER DES LIMITES DE DÉPLACEMENT HAUT ET BAS : BORDS ÉCRAN
+
   // en mode 2 joueurs
   if (mode == "2_Joueurs"){
     if (gb.buttons.repeat(BUTTON_UP, 0)) {
@@ -149,7 +152,7 @@ void setPaddlesBehaviors(const char* mode){
 void setup() {
   gb.begin();
   gb.display.drawImage(0, 0, myImg); 
-  delay(4000);
+  delay(1000);
 }
 uint8_t entry;
 void loop() {
@@ -194,11 +197,27 @@ if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   
 ////////////////////////////////////////////////////////////////////////////////
   // Collisions avec les murs (haut et bas)
-  if ((balle_posY < 0) || (balle_posY > gb.display.height() - balle_taille)) {
-    balle_speedY = -balle_speedY;
-  }
+ // if ((balle_posY < 0) || (balle_posY > gb.display.height() - balle_taille)) {
+ //   balle_speedY = -balle_speedY;
+ // }
+
+ if (balle_posX > gb.display.width()) { 
+  // Reset ball 
+  balle_posX = 20; 
+  balle_posY = random(20, gb.display.height() - 20); 
+  // Random position along the Y axis 
+  balle_speedX = 1; 
+  if (random(0, 2) == 1) { 
+    // 50% of the time, this is true 
+    balle_speedY = 1; 
+    } 
+  else { // Other 50% of the time 
+    balle_speedY = -1; 
+    }
+ } 
+ 
   
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////// SEVERINE
 // Collision avec la raquette gauche
   if ( (balle_posX == raquette1_posX + raquette_largeur)
        && (balle_posY + balle_taille >= raquette1_posY)
