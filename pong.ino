@@ -7,6 +7,7 @@ const char* entries[] = {
 };
 
 bool menu_choice = false;
+Image myImg("/pong/licorne.BMP");
 
 // Caractéristiques de la balle
 int balle_posX = 20;
@@ -14,6 +15,8 @@ int balle_posY = 20;
 int balle_speedX = 1;
 int balle_speedY = 1;
 int balle_taille = 3;
+//On crée une variable pour la couleur de la balle 
+Color balle_color= ORANGE;
 
 // Caractéristiques des raquettes
 //raquette gauche
@@ -36,6 +39,26 @@ int score2;  // Score du joueur 2
 
 int difficulte = 3;  // Niveau de difficulté. 3 = FACILE et 2 = DIFFICILE
 
+////////////////////////////////////////////////////////////////////////////////////
+//Création d'une méthode random pour la couleur 
+
+Color createColor() { 
+  // On crée les trois couleurs primaires
+  int rand_color_rouge = rand() % 255; 
+  int rand_color_vert = rand() % 255; 
+  int rand_color_bleu = rand() % 255; 
+  //On crée notre couleur random
+  Color randColor= gb.createColor(rand_color_rouge,rand_color_vert,rand_color_bleu); 
+  return randColor; 
+  }
+  
+////////////////////////////////////////////////////////////////////////////////////
+//création du son émis au contact de la raquette
+const Gamebuino_Meta::Sound_FX my_sfx[] = { 
+  {Gamebuino_Meta::Sound_FX_Wave::NOISE,1,100,2,5,96,3}, 
+  {Gamebuino_Meta::Sound_FX_Wave::SQUARE,1,100,10,0,126,10}, 
+  {Gamebuino_Meta::Sound_FX_Wave::SQUARE,0,120,-6,0,84,10},
+  };
 
 ////////////////////////////////////////////////////////////////////////////////////
 /////// Méthode de Draw initial du level ////////
@@ -69,7 +92,9 @@ void drawLevel(int level, const char* mode){
   setPaddlesBehaviors(mode);
   
   // Afficher la balle
+  gb.display.setColor(balle_color);
   gb.display.fillRect(balle_posX, balle_posY, balle_taille, balle_taille);
+  gb.display.setColor(WHITE);
   // Afficher la raquette1
   gb.display.fillRect(raquette1_posX, raquette1_posY, raquette_largeur, raquette_hauteur);
   // Afficher la raquette2
@@ -123,6 +148,8 @@ void setPaddlesBehaviors(const char* mode){
 
 void setup() {
   gb.begin();
+  gb.display.drawImage(0, 0, myImg); 
+  delay(4000);
 }
 uint8_t entry;
 void loop() {
@@ -172,18 +199,28 @@ if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   }
   
 ////////////////////////////////////////////////////////////////////////////////
-  // Collision balle/raquette1
+// Collision avec la raquette gauche
   if ( (balle_posX == raquette1_posX + raquette_largeur)
        && (balle_posY + balle_taille >= raquette1_posY)
        && (balle_posY <= raquette1_posY + raquette_hauteur) ) {
-       balle_speedX = -balle_speedX;
+    balle_speedX = 1;
+    //On change la couleur de la variable color de la balle après impact avec la raquette gauche avec notre random
+     balle_color = createColor();
+     gb.lights.fill(balle_color = createColor());
+     gb.sound.fx(my_sfx);
+
   }
-  // Collision balle/raquette2
+  // Collision avec la raquette droite
   if ( (balle_posX + balle_taille == raquette2_posX)
        && (balle_posY + balle_taille >= raquette2_posY)
        && (balle_posY <= raquette2_posY + raquette_hauteur) ) {
-    balle_speedX = -balle_speedX;
+    balle_speedX = -1;
+  //On change la couleur de la variable color de la balle après impact avec la raquette gauche avec notre random
+    balle_color = createColor();
+    gb.lights.fill(balle_color = createColor());
+    gb.sound.fx(my_sfx);
   }
+
 
 ////////////////////////////////////////////////////////////////////////////////
   // Vérifier si la balle est sortie de l'écran
