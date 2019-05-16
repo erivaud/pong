@@ -18,17 +18,18 @@ int balle_speedY = 1;
 int balle_taille = 3;
 
 // Caractéristiques des raquettes
+//raquette gauche
 int raquette1_posX = 10;
-int raquette1_posY = 30;//raquette gauche
+int raquette1_posY = 30;
+// raquette droite
 int raquette2_posX = gb.display.width() - 13;
-int raquette2_posY = 30;//IA
-//int raquette3_posX = 10;
-//int raquette3_posY = 30;//Raquette droite
+int raquette2_posY = 30; 
+// les deux raquettes
 int raquette_hauteur = 10;
 int raquette_largeur = 3;
 
-// Pour l'IA
-int raquette_IA_speed = 1; 
+// vitesse
+int raquette_IA_speed = 1; // Pour l'IA
 int raquette_speed = 1;
 
 // Scores
