@@ -209,9 +209,14 @@ void drawCongrats(int winner){
   // gb.display.print(playerName);
     
    // gb.display.clear();
-    gb.display.print("Bravo joueur");
+    gb.display.setFontSize(2);
+    gb.display.setColor(balle_color);
+    gb.display.print("Bravo !!\n");
+    gb.display.setFontSize(1);
+    gb.display.setColor(WHITE);
+    gb.display.print("\njoueur");
     gb.display.print(winner);
-    gb.display.print("\nTu as gagné le niveau : ");
+    gb.display.print("\n\nTu as gagné \nle niveau : ");
     if (level == 2) {
       gb.display.print("EASY");
     }
@@ -291,7 +296,7 @@ else if(congrats){
     level = switchLevel(level);
     int winner = (score1 > score2 ? 1 : 2);
     drawCongrats(winner);
-    delay(1000);
+    delay(4000);
     score1 = 0 ;
     score2 = 0 ;
     delay(1000);
