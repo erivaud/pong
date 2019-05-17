@@ -1,4 +1,7 @@
 #include <Gamebuino-Meta.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 const char* entries[] = {
   "IA",
@@ -7,10 +10,10 @@ const char* entries[] = {
 };
 
 typedef enum directions{
-  UP,
-  RIGHT,
-  DOWN,
-  LEFT
+  UP, // 0
+  DOWN,  // 1
+  RIGHT,  // 2
+  LEFT  // 3
 } Sens;
 
 bool menu_choice = false;
@@ -20,6 +23,8 @@ Image myImg("/pong/licorne.BMP");
 // Caractéristiques de la balle
 int balle_posX = 20;
 int balle_posY = 20;
+Sens directionX = RIGHT;
+Sens directionY = UP;
 int balle_speedX = 1;
 int balle_speedY = 1;
 int balle_taille = 3;
@@ -46,6 +51,16 @@ int score1 = 0;  // Score du joueur 1
 int score2 = 0;  // Score du joueur 2
 
 int level = 3;  // Niveau de difficulté. 3 = FACILE et 2 = DIFFICILE
+
+////////////////////////////////////////////////////////////////////////////////////
+//Création d'une méthode pour générer un random borné
+int rand_born(int a, int b){
+  // permet d'avoir plus de variabilité avec le rand()
+    //srand(time(NULL));
+    // retourne un rand entre a < b
+    return rand()%(b-a) +a;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 //Création d'une méthode pour marquer un point
@@ -76,26 +91,45 @@ const Gamebuino_Meta::Sound_FX my_sfx[] = {
 
 ////////////////////////////////////////////////////////////////////////////////
   // déplacement balle
-  void moveBall(Sens sensY, Sens sensX) {
+    void moveBall(Sens sensY, Sens sensX) {
+    if(sensY == UP) {
+      balle_posY = balle_posY - balle_speedY;
+      directionY = UP;
+    }if(sensY == DOWN) {
+      balle_posY = balle_posY + balle_speedY;
+      directionY = DOWN;
+    }
+    if(sensX == RIGHT) {
+      balle_posX = balle_posX + balle_speedX;
+      directionX = RIGHT;
+    }
+    if(sensX == LEFT) {
+      balle_posX = balle_posX - balle_speedX;
+      directionX = LEFT;
+    }
+  }
+
+  void moveBallY(Sens sensY) {
     if(sensY == UP) {
       balle_posY = balle_posY - balle_speedY;
     }if(sensY == DOWN) {
       balle_posY = balle_posY + balle_speedY;
     }
+  }
+
+    void moveBallX(Sens sensX) {
     if(sensX == RIGHT) {
       balle_posX = balle_posX + balle_speedX;
     }
     if(sensX == LEFT) {
       balle_posX = balle_posX - balle_speedX;
     }
-
-  
   }
 ////////////////////////////////////////////////////////////////////////////////////
 /////// Méthode de Draw initial du level ////////
 
 void drawLevel(int level, const char* mode){
-
+  // désactiver l'affichage de l'écran des félicitations
   congrats = false;
   
   // caractéristiques des éléments en fonction du niveau
@@ -138,7 +172,7 @@ void drawLevel(int level, const char* mode){
   gb.display.print(score1);
   gb.display.setCursor(42, 5);
   gb.display.print(score2);
-  moveBall(UP, RIGHT);
+  moveBall(directionY, directionX);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -266,16 +300,22 @@ else if(congrats){
  //   balle_speedY = -balle_speedY;
  // }
 
- if (balle_posY + balle_taille == 0) {
-  balle_speedY = -balle_speedY;
+ if (balle_posY == 0) {
+    moveBall(DOWN, directionX);
+ }
+ if (balle_posY + balle_taille > gb.display.height()) {
+    moveBall(UP, directionX);
  }
 
-   if (balle_posX < 0) {
+   if (balle_posX + balle_taille < 0) {
     // Replacer la balle sur l'écran
-    balle_posX = 20;
+    balle_posX = raquette1_posX + raquette_largeur + 10;
+    
     // Position aléatoire en Y au centre de l'écran
+
+    // TODO : LE RANDOM semble un peu lazy
     balle_posY = random(20, gb.display.height() - 20);  
-    balle_speedX = 1;
+    moveBall(directionY, RIGHT);
     if (random(0, 2) == 1) {  // 50% du temps
       balle_speedY = 1;
     } 
@@ -287,10 +327,12 @@ else if(congrats){
 
  if (balle_posX > gb.display.width()) { 
   // Replacer la balle sur l'écran
-  balle_posX = 20; 
+  balle_posX = raquette2_posX - 10;
+  
   // Position aléatoire en Y au centre de l'écran
+  // TODO : LE RANDOM semble un peu lazy
   balle_posY = random(20, gb.display.height() - 20); 
-  balle_speedX = 1; 
+  moveBall(directionY, LEFT);
   if (random(0, 2) == 1) { 
     // 50% of the time, this is true 
     balle_speedY = 1; 
@@ -306,7 +348,7 @@ else if(congrats){
   if ( (balle_posX == raquette1_posX + raquette_largeur)
        && (balle_posY + balle_taille >= raquette1_posY)
        && (balle_posY <= raquette1_posY + raquette_hauteur) ) {
-    balle_speedX = 1;
+    moveBall(directionY, RIGHT);
     //On change la couleur de la variable color de la balle après impact avec la raquette gauche avec notre random
      balle_color = createColor();
      gb.lights.fill(balle_color = createColor());
@@ -317,7 +359,7 @@ else if(congrats){
   if ( (balle_posX + balle_taille == raquette2_posX)
        && (balle_posY + balle_taille >= raquette2_posY)
        && (balle_posY <= raquette2_posY + raquette_hauteur) ) {
-    balle_speedX = -1;
+    moveBall(directionY, LEFT);
   //On change la couleur de la variable color de la balle après impact avec la raquette gauche avec notre random
     balle_color = createColor();
     gb.lights.fill(balle_color = createColor());
