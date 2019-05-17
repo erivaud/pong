@@ -54,6 +54,7 @@ int level = 3;  // Niveau de difficulté. 3 = FACILE et 2 = DIFFICILE
 
 ////////////////////////////////////////////////////////////////////////////////////
 //Création d'une méthode pour générer un random borné
+// le random semblait un peu lazy
 int rand_born(int a, int b){
   // permet d'avoir plus de variabilité avec le rand()
     //srand(time(NULL));
@@ -63,23 +64,23 @@ int rand_born(int a, int b){
 
 //Création d'une méthode pour random une direction Y
 Sens rand_Y(){
-    int rand01 = rand_born(0, 1);
-    if (rand01 == 0) {
-      return UP;
-    }
-    if (rand01 == 1) {
-      return DOWN;
+  if (random(0, 2) == 1) { 
+    // 50% of the time, this is true 
+    return UP;
+    } 
+  else { // Other 50% of the time 
+    return DOWN; 
     }
 }
 
 //Création d'une méthode pour random une direction X
 Sens rand_X(){
-    int rand23 = rand_born(2, 3);
-    if (rand23 == 2) {
-      return RIGHT;
-    }
-    if (rand23 == 3) {
-      return LEFT;
+  if (random(0, 2) == 1) { 
+    // 50% of the time, this is true 
+    return RIGHT;
+    } 
+  else { // Other 50% of the time 
+    return LEFT; 
     }
 }
 
@@ -335,34 +336,16 @@ else if(congrats){
     balle_posX = raquette1_posX + raquette_largeur + 10;
     balle_posY = rand_born(20, gb.display.height() - 20);
     // Position aléatoire en Y au centre de l'écran
-
-    // TODO : LE RANDOM semble un peu lazy
-   //balle_posY = random(20, gb.display.height() - 20);  
-    moveBall(directionY, RIGHT);
-    if (random(0, 2) == 1) {  // 50% du temps
-      balle_speedY = 1;
-    } 
-    else {  // 50% du temps
-      balle_speedY = -1;
-    }
+    moveBall(rand_Y(), RIGHT);
     score2 = increment(score2);
   }
-
+  // replacer la balle + SCORER sur l'écran après la sortie à droite ou à gauche
+  // droite
  if (balle_posX > gb.display.width()) { 
   // Replacer la balle sur l'écran
   balle_posX = raquette2_posX - 10;
-  
-  // Position aléatoire en Y au centre de l'écran
-  // TODO : LE RANDOM semble un peu lazy
-  balle_posY = random(20, gb.display.height() - 20); 
-  moveBall(directionY, LEFT);
-  if (random(0, 2) == 1) { 
-    // 50% of the time, this is true 
-    balle_speedY = 1; 
-    } 
-  else { // Other 50% of the time 
-    balle_speedY = -1; 
-    }
+  balle_posY = rand_born(20, gb.display.height() - 20);
+    moveBall(rand_Y(), LEFT);
     score1 = increment(score1);
  } 
   
