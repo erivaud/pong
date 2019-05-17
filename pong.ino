@@ -185,9 +185,9 @@ void drawLevel(int level, const char* mode){
   gb.display.setColor(balle_color);
   gb.display.fillRect(balle_posX, balle_posY, balle_taille, balle_taille);
   gb.display.setColor(WHITE);
-  // Afficher la raquette1
+  // Afficher la raquette1 à gauche
   gb.display.fillRect(raquette1_posX, raquette1_posY, raquette_largeur, raquette_hauteur);
-  // Afficher la raquette2
+  // Afficher la raquette2 à droite
   gb.display.fillRect(raquette2_posX, raquette2_posY, raquette_largeur, raquette_hauteur);
 
   // Afficher les scores
@@ -247,15 +247,15 @@ void setPaddlesBehaviors(const char* mode){
   // => OK à tester quand le rebond de la balle sera ok sur les bords haut et bas de l'écran
   
   if (mode == "IA"){
-    if (balle_posY > raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
-        raquette_IA_speed = raquette_IA_speed;
+    if ((balle_posY > raquette2_posY + raquette_hauteur / 2 && rand_born(0, level) == 1) 
+    || ( raquette2_posY == 0)){
+        raquette_IA_speed = level - 1;
       } 
-    else if (balle_posY < raquette2_posY + raquette_hauteur / 2 && random(0, level) == 1) {
-        raquette_IA_speed = -raquette_IA_speed;
+    else if ((balle_posY < raquette2_posY + raquette_hauteur / 2 && rand_born(0, level) == 1)
+    || ( raquette2_posY == gb.display.height())){
+        raquette_IA_speed = - level - 1;
       }
-      if( (raquette2_posY > 0) && (raquette2_posY + raquette_hauteur < gb.display.height()-1)) {
       raquette2_posY = raquette2_posY + raquette_IA_speed;
-    }
   }
 }
 
@@ -308,14 +308,11 @@ else if(congrats){
     congrats = true;
   }
 
-
-  
 ////////////////////////////////////////////////////////////////////////////////
  // Changement de difficulté quand on appuie sur le bouton GAUCHE
   if (gb.buttons.pressed(BUTTON_LEFT)) {
     level = switchLevel(level);
   }
-
 
 ////////////////////////////////////////////////////////////////////////////////
   // Collisions avec les murs (haut et bas)
@@ -372,12 +369,6 @@ else if(congrats){
     gb.sound.fx(my_sfx);
   }
 
-
-
-
-
-
  }
 
-  
 }
