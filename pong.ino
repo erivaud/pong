@@ -257,7 +257,7 @@ void setPaddlesBehaviors(const char* mode){
         raquette_IA_speed = level - 1;
       } 
     else if ((balle_posY < raquette2_posY + raquette_hauteur / 2 && rand_born(0, level) == 1)
-    || ( raquette2_posY == gb.display.height())){
+    || ( raquette2_posY + raquette_hauteur == gb.display.height())){
         raquette_IA_speed = - level - 1;
       }
       raquette2_posY = raquette2_posY + raquette_IA_speed;
