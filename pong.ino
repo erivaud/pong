@@ -5,14 +5,13 @@
 
 const char* entries[] = {
   "IA",
-  "2_Joueurs",
-  "Scores",
+  "2_Joueurs"
 };
 
 typedef enum directions{
   UP, // 0
   DOWN,  // 1
-  RIGHT,  // 2
+  RIGHT,  // 2n
   LEFT  // 3
 } Sens;
 
@@ -201,12 +200,6 @@ void drawLevel(int level, const char* mode){
 ////////////////////////////////////////////////////////////////////
 ////// Méthode pour dessiner un écran de félicitations entre les menus 
 void drawCongrats(int winner){
-    /*pong_ia;*/
-  // char playerName[13];
-  // gb.getDefaultName(playerName);
-  // gb.gui.keyboard("Nouveau score!", playerName);
-  // gb.display.print("Bravo ");
-  // gb.display.print(playerName);
     
    // gb.display.clear();
     gb.display.setFontSize(2);
@@ -216,7 +209,7 @@ void drawCongrats(int winner){
     gb.display.setColor(WHITE);
     gb.display.print("\njoueur");
     gb.display.print(winner);
-    gb.display.print("\n\nTu as gagné \nle niveau : ");
+    gb.display.print("\n\nTu as gagne \nle niveau : ");
     if (level == 2) {
       gb.display.print("EASY");
     }
@@ -276,20 +269,35 @@ int switchLevel(int level) {
     return level;
 }
 
+void arcEnCiel(){
+  gb.lights.drawPixel(1, 0, createColor());
+  gb.lights.drawPixel(1, 1, createColor());
+  gb.lights.drawPixel(1, 2, createColor());
+  gb.lights.drawPixel(1, 3, createColor());
+  gb.lights.drawPixel(0, 0, createColor());
+  gb.lights.drawPixel(0, 1, createColor());
+  gb.lights.drawPixel(0, 2, createColor());
+  gb.lights.drawPixel(0, 3, createColor());
+}
+
 void setup() {
   gb.begin();
+  gb.lights.clear();
+  arcEnCiel();
   gb.display.drawImage(0, 0, myImg); 
   delay(4000);
+
 }
 uint8_t entry;
 void loop() {
   while(!gb.update());
   gb.display.clear();
-  
 if (!menu_choice || gb.buttons.pressed(BUTTON_MENU)){
   // display the menu
+   // pétage de noeuils 
   entry = gb.gui.menu("Choix mode de jeu :", entries);
   gb.display.clear();
+    gb.lights.clear();
   menu_choice = true;
  }
 else if(congrats){
