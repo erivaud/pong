@@ -331,7 +331,7 @@ else if(congrats){
 ////////////////////////////////////////////////////////////////////////////////
   // replacer la balle + SCORER sur l'écran après la sortie à droite ou à gauche
   // gauche
-   if (balle_posX + balle_taille < 0) {
+  if (balle_posX + balle_taille < 0) {
     // Replacer la balle sur l'écran
     balle_posX = raquette1_posX + raquette_largeur + 10;
     balle_posY = rand_born(20, gb.display.height() - 20);
@@ -341,10 +341,10 @@ else if(congrats){
   }
   // replacer la balle + SCORER sur l'écran après la sortie à droite ou à gauche
   // droite
- if (balle_posX > gb.display.width()) { 
-  // Replacer la balle sur l'écran
-  balle_posX = raquette2_posX - 10;
-  balle_posY = rand_born(20, gb.display.height() - 20);
+  if (balle_posX > gb.display.width()) { 
+    // Replacer la balle sur l'écran
+    balle_posX = raquette2_posX - 10;
+    balle_posY = rand_born(20, gb.display.height() - 20);
     moveBall(rand_Y(), LEFT);
     score1 = increment(score1);
  } 
