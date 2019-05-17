@@ -279,7 +279,7 @@ int switchLevel(int level) {
 void setup() {
   gb.begin();
   gb.display.drawImage(0, 0, myImg); 
-  delay(1000);
+  delay(4000);
 }
 uint8_t entry;
 void loop() {
