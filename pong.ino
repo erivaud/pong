@@ -61,6 +61,28 @@ int rand_born(int a, int b){
     return rand()%(b-a) +a;
 }
 
+//Création d'une méthode pour random une direction Y
+Sens rand_Y(){
+    int rand01 = rand_born(0, 1);
+    if (rand01 == 0) {
+      return UP;
+    }
+    if (rand01 == 1) {
+      return DOWN;
+    }
+}
+
+//Création d'une méthode pour random une direction X
+Sens rand_X(){
+    int rand23 = rand_born(2, 3);
+    if (rand23 == 2) {
+      return RIGHT;
+    }
+    if (rand23 == 3) {
+      return LEFT;
+    }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 //Création d'une méthode pour marquer un point
@@ -296,25 +318,26 @@ else if(congrats){
 
 ////////////////////////////////////////////////////////////////////////////////
   // Collisions avec les murs (haut et bas)
- // if ((balle_posY < 0) || (balle_posY > gb.display.height() - balle_taille)) {
- //   balle_speedY = -balle_speedY;
- // }
-
+ // haut
  if (balle_posY == 0) {
     moveBall(DOWN, directionX);
  }
+ // bas
  if (balle_posY + balle_taille > gb.display.height()) {
     moveBall(UP, directionX);
  }
 
+////////////////////////////////////////////////////////////////////////////////
+  // replacer la balle + SCORER sur l'écran après la sortie à droite ou à gauche
+  // gauche
    if (balle_posX + balle_taille < 0) {
     // Replacer la balle sur l'écran
     balle_posX = raquette1_posX + raquette_largeur + 10;
-    
+    balle_posY = rand_born(20, gb.display.height() - 20);
     // Position aléatoire en Y au centre de l'écran
 
     // TODO : LE RANDOM semble un peu lazy
-    balle_posY = random(20, gb.display.height() - 20);  
+   //balle_posY = random(20, gb.display.height() - 20);  
     moveBall(directionY, RIGHT);
     if (random(0, 2) == 1) {  // 50% du temps
       balle_speedY = 1;
